@@ -1,4 +1,4 @@
-//@ts-check
+//@ts-check__
 import auth0Ins from "auth0";
 import { to } from "await-to-js";
 
@@ -30,14 +30,15 @@ export const auth0 = new ManagementClient({
 });
 
 export async function getListOfUsersWithUndefined() {
+  // const query = `user_metadata.name:"undefined undefined"`;
   const query = `user_metadata.name:"undefined undefined"`;
   const userList = await auth0.getUsers({
     q: query,
     sort: "created_at:-1",
     include_totals: "true",
     search_engine: "v3",
-    page: 0,
-    per_page: 50,
+    fields: "user_id,user_metadata",
+    per_page: 100,
   });
 
   const users = userList.users.filter((u) => u.user_id.includes("auth0|"));
