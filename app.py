@@ -14,6 +14,7 @@ from aws_cdk import (
 )
 from constructs import Construct
 
+
 class StepfnStack(Stack):
 
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
@@ -23,20 +24,33 @@ class StepfnStack(Stack):
                                   removal_policy=RemovalPolicy.DESTROY,
                                   retention=logs.RetentionDays.ONE_DAY
                                   )
-
+        print(os.environ.get("STAGE"))
         get_users = _lambda.Function(self, "get_users",
                                      code=_lambda.Code.from_asset(
                                          "functions"),
                                      handler="get_users.handler",
                                      timeout=Duration.seconds(900),
-                                     runtime=_lambda.Runtime.NODEJS_18_X
-                                     )
+                                     runtime=_lambda.Runtime.NODEJS_18_X,
+                                     environment={
+                                         'STAGE': os.environ.get("STAGE"),
+                                         "AUTH0_ADMIN_CLIENT_SECRET": os.environ.get(
+                                             "AUTH0_ADMIN_CLIENT_SECRET"),
+                                         "AUTH0_ADMIN_CLIENT":  os.environ.get(
+                                             "AUTH0_ADMIN_CLIENT"),
+                                     })
         process_user = _lambda.Function(self, "process_user",
                                         code=_lambda.Code.from_asset(
                                             "functions"),
                                         handler="process_user.handler",
                                         timeout=Duration.seconds(900),
-                                        runtime=_lambda.Runtime.NODEJS_18_X
+                                        runtime=_lambda.Runtime.NODEJS_18_X,
+                                        environment={
+                                            'STAGE': os.environ.get("STAGE"),
+                                            "AUTH0_ADMIN_CLIENT_SECRET": os.environ.get(
+                                                "AUTH0_ADMIN_CLIENT_SECRET"),
+                                            "AUTH0_ADMIN_CLIENT":  os.environ.get(
+                                                "AUTH0_ADMIN_CLIENT"),
+                                        }
                                         )
 
         getUsers = tasks.LambdaInvoke(self, 'GetUsers',

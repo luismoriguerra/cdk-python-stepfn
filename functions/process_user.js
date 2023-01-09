@@ -1,19 +1,12 @@
-function waitFor(ms) {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve();
-    }, ms);
-  });
-}
+//@ts-check
 
-module.exports.handler = async (event, context) => {
-  console.log("> process_users event", JSON.stringify({ event }, null, 2));
-  const { name } = event || {};
-  const random = Math.floor(Math.random() * 5) + 1;
+import { FixUsermetadataName } from "./auth0.js";
 
-  await waitFor(random);
+export const handler = async (user, context) => {
+  const updated = await FixUsermetadataName(user);
 
   return {
-    message: "User processed: " + name + " in " + random + " seconds",
+    // updated: updated,
+    message: "User processed: " + updated.user_id,
   };
 };
