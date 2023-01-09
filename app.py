@@ -63,7 +63,7 @@ class StepfnStack(Stack):
                                           )
 
         usersMap = sfn.Map(self, "GetUsersMapState",
-                           max_concurrency=2,
+                           max_concurrency=1,
                            items_path=sfn.JsonPath.string_at("$.Payload.users")
                            )
         usersMap.iterator(process_user)
